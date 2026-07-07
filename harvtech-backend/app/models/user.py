@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.sql import func
+from sqlalchemy import Column, Integer, String, Float, DateTime
+from datetime import datetime
 
 from app.core.database import Base
 
@@ -8,8 +8,18 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String(100), nullable=False)
-    email = Column(String(255), unique=True, nullable=False)
-    phone = Column(String(15), unique=True)
-    password_hash = Column(String(255), nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    name = Column(String, nullable=False)
+    place = Column(String, nullable=False)
+
+    aadhar_number = Column(String, unique=True, nullable=False)
+    phone_number = Column(String, unique=True, nullable=False)
+
+    location = Column(String, nullable=False)
+    acres_of_land = Column(Float, nullable=False)
+
+    fin_id = Column(String, unique=True, nullable=False, index=True)
+
+    hashed_password = Column(String, nullable=False)
+
+    created_at = Column(DateTime, default=datetime.utcnow)

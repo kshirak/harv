@@ -12,3 +12,31 @@ database.db
 .vscode/
 
 *.log
+
+# Test and local DBs
+test_auth.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+
+# Packaging/build
+dist/
+build/
+*.egg-info/
+
+# Editor/temp files
+.DS_Store
+*.swp
+.cache/
+
+# Virtualenvs
+.venv/
+
+# Node modules (if frontend added later)
+node_modules/
