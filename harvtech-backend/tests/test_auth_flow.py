@@ -39,7 +39,10 @@ class AuthFlowTests(unittest.TestCase):
             json={"fin_id": "HT9876543210", "password": 1234},
         )
         self.assertEqual(login_response.status_code, 200)
-        self.assertEqual(login_response.json()["message"], "Login successful")
+        login_body = login_response.json()
+        self.assertEqual(login_body["message"], "Login successful")
+        self.assertIn("access_token", login_body)
+        self.assertEqual(login_body["token_type"], "bearer")
 
 
 if __name__ == "__main__":

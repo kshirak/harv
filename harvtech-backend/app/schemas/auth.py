@@ -48,3 +48,11 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class UserLoginResponse(Token):
+    fin_id: str
+    name: str
+    message: str
+
+    model_config = ConfigDict(extra="forbid")

@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.security import get_password_hash, verify_password
+from app.core.security import create_access_token, get_password_hash, verify_password
 from app.models.user import User
-from app.schemas.auth import Token, UserLogin, UserRegister
+from app.schemas.auth import UserLogin, UserLoginResponse, UserRegister
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -24,10 +24,13 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
         user = existing_phone or existing_aadhar
         # If password matches the existing record, behave like a login
         if verify_password(str(payload.password), user.hashed_password):
+            access_token = create_access_token({"sub": user.fin_id})
             return {
                 "message": "User already registered. Logged in successfully",
                 "fin_id": user.fin_id,
                 "name": user.name,
+                "access_token": access_token,
+                "token_type": "bearer",
             }
 
         # Otherwise return a clear conflict message indicating which field collides
@@ -59,7 +62,7 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
     }
 
 
-@router.post("/login", response_model=dict)
+@router.post("/login", response_model=UserLoginResponse)
 def login_user(payload: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.fin_id == payload.fin_id).first()
     if not user:
@@ -68,10 +71,13 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)):
     if not verify_password(str(payload.password), user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid password")
 
+    access_token = create_access_token({"sub": user.fin_id})
     return {
         "message": "Login successful",
         "fin_id": user.fin_id,
         "name": user.name,
+        "access_token": access_token,
+        "token_type": "bearer",
     }
 
 
