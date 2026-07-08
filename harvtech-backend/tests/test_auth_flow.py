@@ -40,9 +40,31 @@ class AuthFlowTests(unittest.TestCase):
         )
         self.assertEqual(login_response.status_code, 200)
         login_body = login_response.json()
+        self.assertTrue(login_body["success"])
         self.assertEqual(login_body["message"], "Login successful")
         self.assertIn("access_token", login_body)
         self.assertEqual(login_body["token_type"], "bearer")
+
+    def test_get_user_details_by_fin_id(self):
+        register_payload = {
+            "name": "Ravi Kumar",
+            "place": "Coimbatore",
+            "aadhar_number": "123456789013",
+            "phone_number": "9876543211",
+            "location": "Tamil Nadu",
+            "acres_of_land": 5.5,
+            "password": 1234,
+        }
+
+        register_response = self.client.post("/auth/register", json=register_payload)
+        self.assertEqual(register_response.status_code, 200)
+        fin_id = register_response.json()["fin_id"]
+
+        user_response = self.client.get(f"/auth/user/{fin_id}")
+        self.assertEqual(user_response.status_code, 200)
+        user_body = user_response.json()
+        self.assertEqual(user_body["fin_id"], fin_id)
+        self.assertEqual(user_body["name"], register_payload["name"])
 
 
 if __name__ == "__main__":

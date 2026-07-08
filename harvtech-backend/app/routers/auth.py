@@ -73,11 +73,31 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)):
 
     access_token = create_access_token({"sub": user.fin_id})
     return {
+        "success": True,
         "message": "Login successful",
         "fin_id": user.fin_id,
         "name": user.name,
         "access_token": access_token,
         "token_type": "bearer",
+    }
+
+
+@router.get("/user/{fin_id}", response_model=dict)
+def get_user_by_fin_id(fin_id: str, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.fin_id == fin_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {
+        "id": user.id,
+        "name": user.name,
+        "place": user.place,
+        "aadhar_number": user.aadhar_number,
+        "phone_number": user.phone_number,
+        "location": user.location,
+        "acres_of_land": user.acres_of_land,
+        "fin_id": user.fin_id,
+        "created_at": user.created_at.isoformat() if user.created_at else None,
     }
 
 

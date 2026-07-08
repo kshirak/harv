@@ -51,6 +51,7 @@ class Token(BaseModel):
 
 
 class UserLoginResponse(Token):
+    success: bool
     fin_id: str
     name: str
     message: str
