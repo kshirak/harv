@@ -5,8 +5,7 @@ __pycache__/
 *.pyd
 
 .env
-
-#database.db
+database.db
 
 .idea/
 .vscode/
