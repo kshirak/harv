@@ -20,11 +20,9 @@ class AuthFlowTests(unittest.TestCase):
     def test_register_and_login_flow(self):
         register_payload = {
             "name": "Ravi Kumar",
-            "place": "Coimbatore",
-            "aadhar_number": "123456789012",
             "phone_number": "9876543210",
             "location": "Tamil Nadu",
-            "acres_of_land": 5.5,
+            "land_area": 5.5,
             "password": 1234,
         }
 
@@ -48,11 +46,9 @@ class AuthFlowTests(unittest.TestCase):
     def test_get_user_details_by_fin_id(self):
         register_payload = {
             "name": "Ravi Kumar",
-            "place": "Coimbatore",
-            "aadhar_number": "123456789013",
             "phone_number": "9876543211",
             "location": "Tamil Nadu",
-            "acres_of_land": 5.5,
+            "land_area": 5.5,
             "password": 1234,
         }
 

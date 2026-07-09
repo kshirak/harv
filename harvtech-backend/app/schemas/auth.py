@@ -5,21 +5,12 @@ from pydantic import BaseModel, ConfigDict, StrictInt, field_validator
 
 class UserRegister(BaseModel):
     name: str
-    place: str
-    aadhar_number: str
     phone_number: str
     location: str
-    acres_of_land: float
+    land_area: float
     password: Union[StrictInt, str]
 
     model_config = ConfigDict(extra="forbid")
-
-    @field_validator("aadhar_number")
-    @classmethod
-    def validate_aadhar_number(cls, value: str) -> str:
-        if not value.isdigit() or len(value) != 12:
-            raise ValueError("Aadhar number must be exactly 12 digits")
-        return value
 
     @field_validator("phone_number")
     @classmethod

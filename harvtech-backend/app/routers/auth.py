@@ -15,39 +15,28 @@ def _build_fin_id(phone_number: str) -> str:
 
 @router.post("/register", response_model=dict)
 def register_user(payload: UserRegister, db: Session = Depends(get_db)):
-    # Check for existing users by phone or aadhar separately
     existing_phone = db.query(User).filter(User.phone_number == payload.phone_number).first()
-    existing_aadhar = db.query(User).filter(User.aadhar_number == payload.aadhar_number).first()
 
-    # If a user exists with same phone or aadhar
-    if existing_phone or existing_aadhar:
-        user = existing_phone or existing_aadhar
-        # If password matches the existing record, behave like a login
-        if verify_password(str(payload.password), user.hashed_password):
-            access_token = create_access_token({"sub": user.fin_id})
+    if existing_phone:
+        if verify_password(str(payload.password), existing_phone.hashed_password):
+            access_token = create_access_token({"sub": existing_phone.fin_id})
             return {
                 "message": "User already registered. Logged in successfully",
-                "fin_id": user.fin_id,
-                "name": user.name,
+                "fin_id": existing_phone.fin_id,
+                "name": existing_phone.name,
                 "access_token": access_token,
                 "token_type": "bearer",
             }
 
-        # Otherwise return a clear conflict message indicating which field collides
-        if existing_phone:
-            raise HTTPException(status_code=409, detail="User with this phone number already exists")
-        else:
-            raise HTTPException(status_code=409, detail="User with this Aadhar number already exists")
+        raise HTTPException(status_code=409, detail="User with this phone number already exists")
 
     fin_id = _build_fin_id(payload.phone_number)
 
     user = User(
         name=payload.name,
-        place=payload.place,
-        aadhar_number=payload.aadhar_number,
         phone_number=payload.phone_number,
         location=payload.location,
-        acres_of_land=payload.acres_of_land,
+        acres_of_land=payload.land_area,
         fin_id=fin_id,
         hashed_password=get_password_hash(str(payload.password)),
     )
