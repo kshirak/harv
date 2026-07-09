@@ -10,9 +10,9 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     name = Column(String, nullable=False)
-    place = Column(String, nullable=True)
+    place = Column(String, nullable=True, default="")
 
-    aadhar_number = Column(String, unique=True, nullable=True)
+    aadhar_number = Column(String, nullable=True, default=None)
     phone_number = Column(String, unique=True, nullable=False)
 
     location = Column(String, nullable=False)

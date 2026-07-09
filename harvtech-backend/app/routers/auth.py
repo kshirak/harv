@@ -34,6 +34,8 @@ def register_user(payload: UserRegister, db: Session = Depends(get_db)):
 
     user = User(
         name=payload.name,
+        place="",
+        aadhar_number=None,
         phone_number=payload.phone_number,
         location=payload.location,
         acres_of_land=payload.land_area,
@@ -80,11 +82,9 @@ def get_user_by_fin_id(fin_id: str, db: Session = Depends(get_db)):
     return {
         "id": user.id,
         "name": user.name,
-        "place": user.place,
-        "aadhar_number": user.aadhar_number,
         "phone_number": user.phone_number,
         "location": user.location,
-        "acres_of_land": user.acres_of_land,
+        "land_area": user.acres_of_land,
         "fin_id": user.fin_id,
         "created_at": user.created_at.isoformat() if user.created_at else None,
     }
@@ -97,11 +97,9 @@ def get_users(db: Session = Depends(get_db)):
         {
             "id": user.id,
             "name": user.name,
-            "place": user.place,
-            "aadhar_number": user.aadhar_number,
             "phone_number": user.phone_number,
             "location": user.location,
-            "acres_of_land": user.acres_of_land,
+            "land_area": user.acres_of_land,
             "fin_id": user.fin_id,
             "created_at": user.created_at.isoformat() if user.created_at else None,
         }
