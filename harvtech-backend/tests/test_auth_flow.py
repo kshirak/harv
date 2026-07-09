@@ -3,6 +3,7 @@ import sys
 import unittest
 
 from fastapi.testclient import TestClient
+from sqlalchemy import text
 
 os.environ["DATABASE_URL"] = "sqlite:///./test_auth.db"
 
@@ -61,6 +62,40 @@ class AuthFlowTests(unittest.TestCase):
         user_body = user_response.json()
         self.assertEqual(user_body["fin_id"], fin_id)
         self.assertEqual(user_body["name"], register_payload["name"])
+
+    def test_register_with_legacy_schema(self):
+        with engine.begin() as connection:
+            connection.execute(text("DROP TABLE IF EXISTS users"))
+            connection.execute(
+                text(
+                    "CREATE TABLE users ("
+                    "id INTEGER NOT NULL PRIMARY KEY, "
+                    "name VARCHAR NOT NULL, "
+                    "place VARCHAR NOT NULL, "
+                    "aadhar_number VARCHAR NOT NULL UNIQUE, "
+                    "phone_number VARCHAR NOT NULL UNIQUE, "
+                    "location VARCHAR NOT NULL, "
+                    "acres_of_land FLOAT NOT NULL, "
+                    "fin_id VARCHAR NOT NULL UNIQUE, "
+                    "hashed_password VARCHAR NOT NULL, "
+                    "created_at DATETIME"
+                    ")"
+                )
+            )
+
+        response = self.client.post(
+            "/auth/register",
+            json={
+                "name": "Legacy User",
+                "phone_number": "9876543212",
+                "location": "Kerala",
+                "land_area": 3.5,
+                "password": 4321,
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["name"], "Legacy User")
 
 
 if __name__ == "__main__":
